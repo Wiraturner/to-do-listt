@@ -89,6 +89,47 @@ export default function TodoList() {
       };
       const docRef = await addDoc(collection(db, 'tasks'), newTask);
       setTasks([...tasks, { id: docRef.id, ...newTask }]);
+
+      await Swal.fire('Berhasil!', 'Tugas berhasil ditambahkan!', 'success');
+    }
+  };
+
+  const editTask = async (id: string): Promise<void> => {
+    const taskToEdit = tasks.find((task) => task.id === id);
+    if (!taskToEdit) return;
+
+    const { value: formValues } = await Swal.fire({
+      title: 'Edit Tugas',
+      html:
+        `<input id="swal-input1" class="swal2-input" value="${taskToEdit.text}" placeholder="Nama tugas">` +
+        `<input id="swal-input2" type="datetime-local" class="swal2-input" value="${taskToEdit.deadline}">`,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Simpan',
+      cancelButtonText: 'Batal',
+      preConfirm: () => {
+        return [
+          (document.getElementById('swal-input1') as HTMLInputElement)?.value,
+          (document.getElementById('swal-input2') as HTMLInputElement)?.value,
+        ];
+      },
+    });
+
+    if (formValues && formValues[0] && formValues[1]) {
+      const updatedTask = {
+        ...taskToEdit,
+        text: formValues[0],
+        deadline: formValues[1],
+      };
+
+      await updateDoc(doc(db, 'tasks', id), {
+        text: updatedTask.text,
+        deadline: updatedTask.deadline,
+      });
+
+      setTasks(tasks.map((task) => (task.id === id ? updatedTask : task)));
+
+      await Swal.fire('Disimpan!', 'Tugas berhasil diubah.', 'success');
     }
   };
 
@@ -106,6 +147,8 @@ export default function TodoList() {
   const deleteTask = async (id: string): Promise<void> => {
     await deleteDoc(doc(db, 'tasks', id));
     setTasks(tasks.filter((task) => task.id !== id));
+
+    await Swal.fire('Terhapus!', 'Tugas berhasil dihapus.', 'success');
   };
 
   return (
@@ -127,8 +170,8 @@ export default function TodoList() {
             const taskColor = task.completed
               ? 'bg-green-200'
               : isExpired
-                ? 'bg-red-200'
-                : 'bg-yellow-200';
+              ? 'bg-red-200'
+              : 'bg-yellow-200';
 
             return (
               <motion.li
@@ -142,19 +185,28 @@ export default function TodoList() {
                 <div className="flex justify-between items-center">
                   <span
                     onClick={() => toggleTask(task.id)}
-                    className={`cursor-pointer transition-500 ${task.completed
+                    className={`cursor-pointer transition-500 ${
+                      task.completed
                         ? 'line-through text-gray-500'
                         : 'font-semibold text-gray-700'
-                      }`}
+                    }`}
                   >
                     {task.text}
                   </span>
-                  <button
-                    onClick={() => deleteTask(task.id)}
-                    className="text-white p-1 rounded bg-red-600 hover:bg-red-800"
-                  >
-                    Hapus
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => editTask(task.id)}
+                      className="text-white p-1 rounded bg-blue-600 hover:bg-blue-800"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteTask(task.id)}
+                      className="text-white p-1 rounded bg-red-600 hover:bg-red-800"
+                    >
+                      Hapus
+                    </button>
+                  </div>
                 </div>
                 <p className="text-sm text-gray-700">
                   Deadline: {new Date(task.deadline).toLocaleString()}
@@ -170,4 +222,3 @@ export default function TodoList() {
     </div>
   );
 }
-
