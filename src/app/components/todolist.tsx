@@ -152,12 +152,13 @@ export default function TodoList() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 bg-white shadow-md rounded-lg">
-      <h1 className="text-2xl bg-pink-500 font-bold mb-4">To-Do List</h1>
+    <div className="max-w-md mx-auto mt-10 p-4 bg-blue-300 shadow-md rounded-lg">
+    <h1 className="text-2xl bg-blue-300 text-white font-bold mb-4">To-Do-List</h1>
+
       <div className="flex justify-center mb-4">
         <button
           onClick={addTask}
-          className="bg-slate-500 text-white px-4 py-2 rounded"
+          className="bg-white text-blue-300 px-4 py-2 rounded font-semibold mb-4"
         >
           Tambah Tugas
         </button>
@@ -171,7 +172,7 @@ export default function TodoList() {
               ? 'bg-green-200'
               : isExpired
               ? 'bg-red-200'
-              : 'bg-yellow-200';
+              : 'bg-white';
 
             return (
               <motion.li
