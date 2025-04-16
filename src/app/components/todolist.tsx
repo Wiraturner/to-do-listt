@@ -153,7 +153,7 @@ export default function TodoList() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-4 bg-white shadow-md rounded-lg">
-      <h1 className="text-2xl text-emerald-500 font-bold mb-4">To-Do List</h1>
+      <h1 className="text-2xl bg-pink-500 font-bold mb-4">To-Do List</h1>
       <div className="flex justify-center mb-4">
         <button
           onClick={addTask}
